@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+ollama:
+  url: "http://localhost:11434"
+  model: "qwen3:8b"
+  timeoutSeconds: 30
+
+logging:
+  level:
+    root: INFO
+    com.example.aiengineeragent: DEBUG

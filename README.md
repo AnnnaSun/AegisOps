@@ -1,0 +1,75 @@
+# AI Engineer Agent - Day1
+
+Spring Boot + Maven 单模块工程，提供最小闭环：`日志输入 -> Ollama 调用 -> 结构化分析返回`。
+
+## 1. IDEA 运行方式（Run/Debug）
+
+1. 用 IntelliJ IDEA 打开项目根目录：`/Users/annasun/Developer/IdeaProjects/AegisOps`
+2. 等待 Maven 依赖导入完成
+3. 打开主类：`com.example.aiengineeragent.AIEngineerAgentApplication`
+4. 点击 `Run` 或 `Debug` 启动
+5. 默认端口：`8080`
+
+建议断点位置：
+- `src/main/java/com/example/aiengineeragent/controller/AnalyzeController.java`
+- `src/main/java/com/example/aiengineeragent/service/AnalyzeService.java`
+- `src/main/java/com/example/aiengineeragent/analyzer/LogAnalyzer.java`
+- `src/main/java/com/example/aiengineeragent/llm/OllamaClient.java`
+
+## 2. 启动 Ollama
+
+1. 启动 Ollama 服务（本地默认 `11434`）
+2. 拉起模型示例：
+
+```bash
+ollama run qwen3:8b
+```
+
+配置位于 `src/main/resources/application.yml`：
+
+```yaml
+ollama:
+  url: "http://localhost:11434"
+  model: "qwen3:8b"
+  timeoutSeconds: 30
+```
+
+## 3. curl 调用示例
+
+```bash
+curl -X POST "http://localhost:8080/analyze/log" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "log": "java.net.ConnectException: Connection refused at ..."
+  }'
+```
+
+示例返回（结构化）：
+
+```json
+{
+  "summary": "...",
+  "risks": ["..."],
+  "suggestions": ["..."],
+  "severity": "HIGH",
+  "rawLLMResponse": "SUMMARY: ..."
+}
+```
+
+## 4. 常见错误排查
+
+1. `Connection refused` / `11434` 不通
+- 检查 Ollama 是否运行
+- 检查 `ollama.url` 是否正确（默认 `http://localhost:11434`）
+
+2. 模型未拉取
+- 执行 `ollama run qwen3:8b` 拉取并启动模型
+- 或修改 `application.yml` 为本机已有模型
+
+3. 请求超时
+- 增大 `ollama.timeoutSeconds`
+- 首次模型加载通常更慢，建议先在终端预热模型
+
+4. Java 版本不匹配
+- 项目要求 Java 23
+- IDEA Project SDK 和 Maven JDK 都要设置为 23

@@ -1,0 +1,36 @@
+# Build outputs
+target/
+out/
+build/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# VS Code
+.vscode/
+
+# Maven
+.mvn/timing.properties
+dependency-reduced-pom.xml
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
