@@ -52,6 +52,10 @@ public class LogAnalyzer implements Analyzer<String, AnalysisResult> {
                 + logText;
     }
 
+    /**
+     * Day1 parser: split model output by fixed section headers.
+     * If headers are missing, keep raw response and return empty structured fields.
+     */
     private AnalysisResult parse(String llmOutput) {
         AnalysisResult result = new AnalysisResult();
         if (llmOutput == null || llmOutput.isBlank()) {
@@ -72,6 +76,9 @@ public class LogAnalyzer implements Analyzer<String, AnalysisResult> {
         return result;
     }
 
+    /**
+     * Extracts text between section markers (or to the end when endMarker is null).
+     */
     private String extractSection(String text, String startMarker, String endMarker) {
         int start = text.indexOf(startMarker);
         if (start < 0) {

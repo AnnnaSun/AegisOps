@@ -22,6 +22,11 @@ public class AnalyzeController {
         this.analyzeService = analyzeService;
     }
 
+    /**
+     * Day1 log analysis entrypoint.
+     * Validation is handled by {@link Valid} on request body,
+     * and the response is returned as a reactive Mono for WebFlux.
+     */
     @PostMapping("/log")
     public Mono<AnalysisResult> analyzeLog(@Valid @RequestBody AnalyzeLogRequest request) {
         return analyzeService.analyzeLog(request.getLog());

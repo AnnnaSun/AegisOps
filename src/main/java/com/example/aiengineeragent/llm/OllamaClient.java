@@ -27,6 +27,10 @@ public class OllamaClient implements LLMClient {
                 .build();
     }
 
+    /**
+     * Calls Ollama in a fully non-blocking way and returns generated text.
+     * This method maps HTTP and timeout failures into RuntimeException with url/model context.
+     */
     @Override
     public Mono<String> generate(String prompt) {
         String promptPreview = truncate(prompt, PROMPT_LOG_LIMIT);
@@ -43,6 +47,7 @@ public class OllamaClient implements LLMClient {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .retrieve()
+                // Capture non-2xx responses with a truncated body for troubleshooting.
                 .onStatus(
                         status -> status.isError(),
                         clientResponse -> clientResponse.bodyToMono(String.class)

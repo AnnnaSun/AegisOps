@@ -7,6 +7,9 @@ public final class SeverityHeuristics {
     private SeverityHeuristics() {
     }
 
+    /**
+     * Simple Day1 severity rules based on keyword matching.
+     */
     public static String judge(String text) {
         if (text == null || text.isBlank()) {
             return "LOW";
