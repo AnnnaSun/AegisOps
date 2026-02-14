@@ -1,6 +1,15 @@
-# AI Engineer Agent - Day1
+# AI Engineer Agent - Day2
 
-Spring Boot + Maven 单模块工程，提供最小闭环：`日志输入 -> Ollama 调用 -> 结构化分析返回`。
+Spring Boot + Maven 单模块工程，提供 Day2 闭环：`日志输入 -> 规则优先 -> LLM(JSON) -> 稳定结构化返回`。
+
+## Day2 关键能力
+
+- 规则优先：命中 `OOMRule` 时直接返回，不调用 LLM
+- LLM 强制 JSON：Prompt 约束仅输出 JSON
+- 解析兜底：Jackson 解析失败时返回 fallback，不把异常抛到 Controller
+- 结果扩展：`AnalysisResult` 新增 `evidence` 字段（当前允许为空）
+- Ollama 兼容：`/api/generate` 使用 `stream=false`，解析 `response` 字段
+- 运行日志：记录规则命中/是否调用 LLM/解析成功或失败
 
 ## 1. IDEA 运行方式（Run/Debug）
 
@@ -52,6 +61,7 @@ curl -X POST "http://localhost:8080/analyze/log" \
   "risks": ["..."],
   "suggestions": ["..."],
   "severity": "HIGH",
+  "evidence": [],
   "rawLLMResponse": "SUMMARY: ..."
 }
 ```

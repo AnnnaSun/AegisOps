@@ -1,14 +1,18 @@
 package com.example.aiengineeragent.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AnalysisResult {
 
     private String summary;
     private List<String> risks = new ArrayList<>();
     private List<String> suggestions = new ArrayList<>();
     private String severity;
+    private List<Evidence> evidence = new ArrayList<>();
     private String rawLLMResponse;
 
     public String getSummary() {
@@ -41,6 +45,14 @@ public class AnalysisResult {
 
     public void setSeverity(String severity) {
         this.severity = severity;
+    }
+
+    public List<Evidence> getEvidence() {
+        return evidence;
+    }
+
+    public void setEvidence(List<Evidence> evidence) {
+        this.evidence = evidence;
     }
 
     public String getRawLLMResponse() {
