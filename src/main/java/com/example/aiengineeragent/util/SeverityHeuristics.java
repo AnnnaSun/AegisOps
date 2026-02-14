@@ -30,10 +30,13 @@ public final class SeverityHeuristics {
                 "too many open files",
                 "disk full",
                 "broken pipe",
-                "segmentation fault",
-                "fatal",
-                "panic",
-                "corrupt")) {
+                "segmentation fault")) {
+            return "HIGH";
+        }
+
+        if (isFatalWithErrorContext(normalized)
+                || isPanicHighSignal(normalized)
+                || isCorruptHighSignal(normalized)) {
             return "HIGH";
         }
 
@@ -54,11 +57,31 @@ public final class SeverityHeuristics {
                 "thread starvation",
                 "pool exhausted",
                 "falling back",
-                "fallback to")) {
+                "fallback to",
+                "corrupt")) {
             return "MEDIUM";
         }
 
         return "LOW";
+    }
+
+    private static boolean isFatalWithErrorContext(String text) {
+        return text.contains("fatal")
+                && (text.contains("error") || text.contains("exception") || text.contains("crash"));
+    }
+
+    private static boolean isPanicHighSignal(String text) {
+        return text.contains("kernel panic") || text.contains("panic:");
+    }
+
+    private static boolean isCorruptHighSignal(String text) {
+        return containsAny(text,
+                "corrupt index",
+                "corrupted index",
+                "corrupt file",
+                "corrupted file",
+                "corrupt database",
+                "corrupted database");
     }
 
     private static boolean containsAny(String text, String... keywords) {

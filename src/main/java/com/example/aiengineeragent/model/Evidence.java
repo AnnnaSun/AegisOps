@@ -1,8 +1,16 @@
 package com.example.aiengineeragent.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Evidence {
 
+    // Keep compatibility with LLM outputs using source/snippet keys.
+    // Internally we still expose type/detail to avoid breaking existing API usage.
+    @JsonAlias("source")
     private String type;
+    @JsonAlias("snippet")
     private String detail;
 
     public Evidence() {

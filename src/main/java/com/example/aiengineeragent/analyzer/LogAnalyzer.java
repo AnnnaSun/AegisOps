@@ -51,7 +51,6 @@ public class LogAnalyzer implements Analyzer<String, AnalysisResult> {
                 .map(llmOutput -> {
                     // Parse model output into typed DTO; fallback on invalid JSON.
                     AnalysisResult result = parseOrFallback(llmOutput, input);
-                    result.setRawLLMResponse(llmOutput);
                     log.debug("Finish log analysis. severity={}", result.getSeverity());
                     return result;
                 })
@@ -66,7 +65,7 @@ public class LogAnalyzer implements Analyzer<String, AnalysisResult> {
                 + "Analyze the following log and output JSON only.\n"
                 + "Do NOT output markdown, explanation, or code fences.\n"
                 + "Output must be a valid JSON object with fields:\n"
-                + "{\"summary\":\"string\",\"risks\":[\"string\"],\"suggestions\":[\"string\"],\"severity\":\"LOW|MEDIUM|HIGH\",\"evidence\":[{\"type\":\"string\",\"detail\":\"string\"}]}\n"
+                + "{\"summary\":\"string\",\"risks\":[\"string\"],\"suggestions\":[\"string\"],\"severity\":\"LOW|MEDIUM|HIGH\",\"evidence\":[{\"source\":\"TOOL|KB|CASE|LOG\",\"snippet\":\"string\"}]}\n"
                 + "If uncertain, still return valid JSON with conservative values and empty arrays.\n"
                 + "Log content:\n"
                 + logText;
@@ -81,6 +80,7 @@ public class LogAnalyzer implements Analyzer<String, AnalysisResult> {
         try {
             AnalysisResult parsed = objectMapper.readValue(llmOutput, AnalysisResult.class);
             AnalysisResult normalized = normalize(parsed, input);
+            normalized.setRawLLMResponse(llmOutput);
             log.info("LLM JSON parsed successfully. parseSuccess=true");
             return normalized;
         } catch (JsonProcessingException ex) {

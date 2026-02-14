@@ -18,6 +18,18 @@ Spring Boot + Maven 单模块工程，提供 Day2 闭环：`日志输入 -> 规�
 - `900+`：兜底类规则
 - 当前 `OOMRule` 使用 `@Order(10)`，属于最高优先级一档
 
+## Day2.1 Notes
+
+- Severity 误报收敛：
+  - `fatal` 不再单独触发 HIGH，需同时命中 `error|exception|crash`
+  - `panic` 仅在 `kernel panic` 或 `panic:` 场景触发 HIGH
+  - `corrupt` 仅在 `corrupt(ed) index|file|database` 场景触发 HIGH，其他场景降为 MEDIUM
+- 测试覆盖点（核心分支）：
+  - OOM 规则短路且不调用 LLM
+  - LLM 返回合法 JSON 的解析成功路径
+  - LLM 返回非 JSON 的 fallback 路径
+  - LLM 调用异常路径（可选加分项，已覆盖）
+
 ## 1. IDEA 运行方式（Run/Debug）
 
 1. 用 IntelliJ IDEA 打开项目根目录：`/Users/annasun/Developer/IdeaProjects/AegisOps`
