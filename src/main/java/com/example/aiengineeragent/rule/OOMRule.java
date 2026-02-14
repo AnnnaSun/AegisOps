@@ -1,13 +1,21 @@
 package com.example.aiengineeragent.rule;
 
 import com.example.aiengineeragent.model.AnalysisResult;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+/**
+ * Rule priority convention:
+ * - HIGH deterministic rules: 10-99
+ * - Medium-confidence rules: 100-199
+ * - Fallback-style rules: 900+
+ */
 @Component
+@Order(10)
 public class OOMRule implements LogRule {
 
     @Override

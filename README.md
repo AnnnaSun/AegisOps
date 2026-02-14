@@ -11,6 +11,13 @@ Spring Boot + Maven 单模块工程，提供 Day2 闭环：`日志输入 -> 规�
 - Ollama 兼容：`/api/generate` 使用 `stream=false`，解析 `response` 字段
 - 运行日志：记录规则命中/是否调用 LLM/解析成功或失败
 
+## Dev Notes（规则优先级约定）
+
+- `10-99`：HIGH 确定性规则（优先执行）
+- `100-199`：中等置信度规则
+- `900+`：兜底类规则
+- 当前 `OOMRule` 使用 `@Order(10)`，属于最高优先级一档
+
 ## 1. IDEA 运行方式（Run/Debug）
 
 1. 用 IntelliJ IDEA 打开项目根目录：`/Users/annasun/Developer/IdeaProjects/AegisOps`
