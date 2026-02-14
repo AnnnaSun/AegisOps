@@ -14,6 +14,7 @@ import java.time.Duration;
 public class OllamaClient implements LLMClient {
 
     private static final Logger log = LoggerFactory.getLogger(OllamaClient.class);
+    private static final String GENERATE_API_PATH = "/api/generate";
     private static final int PROMPT_LOG_LIMIT = 200;
     private static final int ERROR_BODY_LIMIT = 500;
 
@@ -43,7 +44,7 @@ public class OllamaClient implements LLMClient {
         request.setStream(false);
 
         return webClient.post()
-                .uri("/api/generate")
+                .uri(GENERATE_API_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .retrieve()
@@ -65,14 +66,23 @@ public class OllamaClient implements LLMClient {
                 .bodyToMono(OllamaGenerateResponse.class)
                 .timeout(Duration.ofSeconds(ollamaProperties.getTimeoutSeconds()))
                 .map(response -> {
-                    if (response == null || response.getResponse() == null) {
+                    if (response == null) {
                         throw new RuntimeException(String.format(
-                                "Ollama response is empty. url=%s, model=%s",
+                                "Ollama response body is empty. url=%s, model=%s",
                                 ollamaProperties.getUrl(), ollamaProperties.getModel()));
                     }
+
+                    String generatedText = response.getResponse();
+                    if (generatedText == null) {
+                        // Keep upstream analyzer in control of fallback decisions.
+                        log.warn("Ollama response field missing. url={}, model={}, parsedField=response",
+                                ollamaProperties.getUrl(), ollamaProperties.getModel());
+                        return "";
+                    }
+
                     log.info("Ollama generate succeeded. url={}, model={}",
                             ollamaProperties.getUrl(), ollamaProperties.getModel());
-                    return response.getResponse();
+                    return generatedText;
                 })
                 .onErrorMap(ex -> {
                     String message = String.format("Ollama call error. url=%s, model=%s, reason=%s",
