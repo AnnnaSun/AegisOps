@@ -92,6 +92,11 @@ public class OllamaClient implements LLMClient {
                 });
     }
 
+    @Override
+    public String modelName() {
+        return ollamaProperties.getModel();
+    }
+
     /**
      * Truncates long text for safe logging and error reporting.
      * <p>
